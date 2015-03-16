@@ -1,0 +1,31 @@
+#!/bin/bash -x
+
+# Retrieve arguments
+domain=$1
+path=/
+
+sudo yunohost app checkurl $domain$path -a lets-chat
+if [[ ! $? -eq 0 ]]; then
+    exit 1
+fi
+
+# Install dependances
+sudo apt-get update
+sudo apt-get install -y python-software-properties
+sudo apt-add-repository -y ppa:chris-lea/node.js
+sudo apt-get update
+sudo apt-get install -y mongodb build-essential nodejs npm git
+
+# Install sources
+final_path=/opt/yunohost/lets-chat
+sudo mkdir -p $final_path
+sudo cp -a ../sources/* $final_path
+cd $final_path && npm install && cd -
+
+# Enable services
+sudo service mongod start
+npm start
+
+# Regenerate SSOwat conf
+yunohost app setting lets-chat unprotected_urls -v "/"
+yunohost app ssowatconf

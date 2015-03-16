@@ -1,0 +1,26 @@
+{
+    "name": "Let's Chat",
+    "id": "lets-chat",
+    "description": {
+        "en": "Self-hosted chat for small teams",
+        "fr": "Un webchat pour les petits groupes"
+    },
+    "license": "MIT",
+    "developer": {
+        "name": "pmorinerie",
+        "email": "kemenaran@gmail.com"
+    },
+    "multi_instance": "true",
+    "arguments": {
+        "install" : [
+            {
+                "name": "domain",
+                "ask": {
+                    "en": "Choose a domain for Let's Chat",
+                    "fr": "Choisissez un domaine pour Let's Chat"
+                },
+                "example": "domain.org"
+            }
+        ]
+    }
+}
