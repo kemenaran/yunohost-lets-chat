@@ -1,6 +1,6 @@
 {
     "name": "Let's Chat",
-    "id": "lets-chat",
+    "id": "letschat",
     "description": {
         "en": "Self-hosted chat for small teams",
         "fr": "Un webchat pour les petits groupes"
@@ -20,6 +20,15 @@
                     "fr": "Choisissez un domaine pour Let's Chat"
                 },
                 "example": "domain.org"
+            },
+            {
+                "name": "public_site",
+                "ask": {
+                    "en": "Can guest users access this chat?",
+                    "fr": "Les utilisateurs non-enregistrés peuvent-ils accéder à ce chat ?"
+                },
+                "choices": ["Yes", "No"],
+                "default": "Yes"
             }
         ]
     }

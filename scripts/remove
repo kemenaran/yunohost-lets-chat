@@ -1,0 +1,8 @@
+#!/bin/bash
+
+domain=$(sudo yunohost app setting letschat domain)
+
+sudo rm -rf /var/www/letschat
+sudo rm -f /etc/nginx/conf.d/$domain.d/letschat.conf
+#sudo service etherpad-lite stop
+#sudo rm /etc/init.d/etherpad-lite

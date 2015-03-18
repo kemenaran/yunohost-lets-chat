@@ -1,31 +1,56 @@
-#!/bin/bash -x
+#!/bin/bash -ex
 
 # Retrieve arguments
 domain=$1
-path=/
+is_public=$2
+path=""
 
-sudo yunohost app checkurl $domain$path -a lets-chat
+sudo yunohost app checkurl $domain$path -a letschat
 if [[ ! $? -eq 0 ]]; then
     exit 1
 fi
 
-# Install dependances
-sudo apt-get update
-sudo apt-get install -y python-software-properties
-sudo apt-add-repository -y ppa:chris-lea/node.js
-sudo apt-get update
-sudo apt-get install -y mongodb build-essential nodejs npm git
+# Save specific settings
+sudo yunohost app setting letschat is_public -v $is_public
+
+# Fix mongodb-server permissions (https://jira.mongodb.org/browse/SERVER-10623)
+sudo chmod 755 /sys/devices/system/node
+
+# Install system dependencies
+sudo apt-get install -y git build-essential python-software-properties nodejs-legacy npm mongodb
+sudo npm install forever -g
 
 # Install sources
-final_path=/opt/yunohost/lets-chat
+final_path=/var/www/letschat
 sudo mkdir -p $final_path
-sudo cp -a ../sources/* $final_path
-cd $final_path && npm install && cd -
+sudo git clone https://github.com/sdelements/lets-chat.git $final_path
+sudo cp $final_path/settings.yml.sample $final_path/settings.yml
 
-# Enable services
-sudo service mongod start
-npm start
+# Install app dependencies
+cd $final_path
+sudo npm cache clear
+sudo npm install
+cd -
 
-# Regenerate SSOwat conf
-yunohost app setting lets-chat unprotected_urls -v "/"
-yunohost app ssowatconf
+# Set permissions to app directory
+sudo chown -R www-data: $final_path
+
+# Modify Nginx configuration file and copy it to Nginx conf directory
+sudo cp ../conf/nginx.conf-nosub /etc/nginx/conf.d/$domain.d/letschat.conf
+
+# Copy init.d script
+sudo cp ../conf/letschat /etc/init.d/
+sudo chmod +x /etc/init.d/letschat
+
+# Reload Nginx and regenerate SSOwat conf
+sudo service nginx reload
+if [ "$is_public" = "Yes" ];
+then
+    sudo yunohost app setting letschat unprotected_uris -v "/"
+fi
+sudo yunohost app ssowatconf
+
+# Start app
+sudo service mongodb start
+sudo service letschat start
+
