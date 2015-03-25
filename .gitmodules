@@ -1,0 +1,6 @@
+[submodule "sources/lets-chat"]
+	path = sources/lets-chat
+	url = https://github.com/sdelements/lets-chat.git
+[submodule "sources/lets-chat-ldap"]
+	path = sources/lets-chat-ldap
+	url = https://github.com/kemenaran/lets-chat-ldap.git

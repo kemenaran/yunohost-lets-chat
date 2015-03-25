@@ -1,5 +1,5 @@
 {
-    "name": "Let's Chat",
+    "name": "Let’s Chat",
     "id": "letschat",
     "description": {
         "en": "Self-hosted chat for small teams",
@@ -10,7 +10,7 @@
         "name": "pmorinerie",
         "email": "kemenaran@gmail.com"
     },
-    "multi_instance": "true",
+    "multi_instance": "false",
     "arguments": {
         "install" : [
             {
