@@ -1,24 +1,9 @@
 #!/bin/bash -ex
 
 # Retrieve arguments
-domain=$1
-is_public=$2
+domain=$(sudo yunohost app setting letschat domain)
+is_public=$(sudo yunohost app setting letschat is_public)
 path=""
-
-sudo yunohost app checkurl $domain$path -a letschat
-if [[ ! $? -eq 0 ]]; then
-    exit 1
-fi
-
-# Save specific settings
-sudo yunohost app setting letschat is_public -v $is_public
-
-# Fix mongodb-server permissions (https://jira.mongodb.org/browse/SERVER-10623)
-sudo chmod 755 /sys/devices/system/node
-
-# Install system dependencies
-sudo apt-get install -y git build-essential python-software-properties nodejs-legacy npm mongodb
-sudo npm install forever -g
 
 # Install sources
 sources_path=$(pwd)/../sources
@@ -55,6 +40,4 @@ fi
 sudo yunohost app ssowatconf
 
 # Start app
-sudo service mongodb start
-sudo service letschat start
-
+sudo service letschat restart

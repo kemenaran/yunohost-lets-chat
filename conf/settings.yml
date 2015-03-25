@@ -1,0 +1,59 @@
+#
+# Let's Chat Settings
+#
+# See defaults.yml for all available options
+#
+
+env: production # development / production
+
+http:
+  enable: true
+  host: 'localhost'
+  port: 5000
+
+https:
+  enable: false
+  port: 5001
+  key: key.pem
+  cert: certificate.pem
+
+files:
+  enable: true
+  provider: local
+  local:
+    dir: uploads
+
+xmpp:
+  enable: false
+  port: 5222
+  host: localhost
+
+database:
+  uri: mongodb://localhost/letschat
+
+secrets:
+  cookie: yunohostsecretrecipe
+
+auth:
+  providers: [local,ldap]
+  local:
+    enableRegistration: true
+    salt: secretsauce # Required when upgrading from version < 0.3
+
+  ldap:
+    connect_settings:
+      url: ldap://localhost:389
+      tlsOptions:
+        ca: ca.pem
+    search:
+      base: ou=users,dc=yunohost,dc=org
+      opts:
+        scope: one # Base search (base), one level search (one) or subtree search (sub)
+        filter: (uid={{username}}) # Only {{username}} is available
+    field_mappings:
+      uid: uid # LDAP unique ID
+      username: uid # used for mention (@uid)
+      firstName: givenName
+      lastName: sn
+      displayName: givenName
+      email: mail
