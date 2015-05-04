@@ -21,13 +21,15 @@ sudo apt-get install -y git build-essential python-software-properties nodejs-le
 sudo npm install forever -g
 
 # Install sources
-sources_path=$(pwd)/../sources
+root_path=$(pwd)/..
+sources_path=$root_path/sources
 final_path=/var/www/letschat
+cd $root_path
 git submodule init
 git submodule update
 sudo mkdir -p $final_path
 sudo cp -rf $sources_path/lets-chat/* $final_path
-sudo cp ../conf/settings.yml $final_path/settings.yml
+sudo cp $root_path/conf/settings.yml $final_path/settings.yml
 
 # Install app dependencies
 cd $final_path
@@ -40,10 +42,10 @@ cd -
 sudo chown -R www-data: $final_path
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
-sudo cp ../conf/nginx.conf-nosub /etc/nginx/conf.d/$domain.d/letschat.conf
+sudo cp $root_path/conf/nginx.conf-nosub /etc/nginx/conf.d/$domain.d/letschat.conf
 
 # Copy init.d script
-sudo cp ../conf/letschat /etc/init.d/
+sudo cp $root_path/conf/letschat /etc/init.d/
 sudo chmod +x /etc/init.d/letschat
 
 # Reload Nginx and regenerate SSOwat conf
