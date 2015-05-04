@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e # Exit on error
 
 domain=$(sudo yunohost app setting letschat domain)
 
@@ -10,4 +11,5 @@ sudo rm -rf /var/www/letschat
 
 # Remove configuration files
 sudo rm -f /etc/nginx/conf.d/$domain.d/letschat.conf
-sudo rm /etc/init.d/letschat 
+sudo rm /etc/init.d/letschat
+
