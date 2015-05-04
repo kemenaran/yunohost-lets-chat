@@ -25,9 +25,6 @@ sudo npm install forever -g
 root_path=$(pwd)/..
 sources_path=$root_path/sources
 final_path=/var/www/letschat
-cd $root_path
-git submodule init
-git submodule update
 sudo mkdir -p $final_path
 sudo cp -rf $sources_path/lets-chat/* $final_path
 sudo cp $root_path/conf/settings.yml $final_path/settings.yml
@@ -60,4 +57,3 @@ sudo yunohost app ssowatconf
 # Start app
 sudo service mongodb start
 sudo service letschat start
-
