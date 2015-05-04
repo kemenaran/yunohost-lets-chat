@@ -1,0 +1,22 @@
+#!/bin/bash -ex
+# Pull most recent Let's Chat sources.
+
+root_dir=$(dirname "$0")/..
+sources_dir=$root_dir/sources
+
+rm -rf $sources_dir/lets-chat
+rm -rf $sources_dir/lets-chat-ldap
+
+git clone git@github.com:sdelements/lets-chat.git      $sources_dir/lets-chat
+git clone git@github.com:sdelements/lets-chat-ldap.git $sources_dir/lets-chat-ldap
+
+# Git forbids to add a `.git` directory in a subdirectory (except when using submodules).
+# Remove them.
+rm -rf $sources_dir/lets-chat/.git
+rm -rf $sources_dir/lets-chat-ldap/.git
+
+cd $root_dir
+git add $sources_dir/*
+
+echo "Let's Chat sources pulled. Now commit the changes."
+
