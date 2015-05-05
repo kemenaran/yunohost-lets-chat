@@ -19,21 +19,19 @@ sudo chmod 755 /sys/devices/system/node
 
 # Install system dependencies
 sudo apt-get install -y git build-essential python-software-properties nodejs-legacy npm mongodb
-sudo npm install forever -g
+sudo which forever >/dev/null 2>&1 || sudo npm install forever -g
 
 # Install sources
 root_path=$(pwd)/..
 sources_path=$root_path/sources
 final_path=/var/www/letschat
 sudo mkdir -p $final_path
-sudo cp -rf $sources_path/lets-chat/* $final_path
+sudo cp -af $sources_path/lets-chat/* $final_path
 sudo cp $root_path/conf/settings.yml $final_path/settings.yml
 
-# Install app dependencies
+# Rebuild binary dependencies
 cd $final_path
-sudo npm cache clear
-sudo npm install
-sudo npm install $sources_path/lets-chat-ldap
+sudo npm rebuild
 cd -
 
 # Set permissions to app directory
