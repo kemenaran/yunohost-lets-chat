@@ -34,6 +34,7 @@ cd $final_path
 sudo npm cache clear
 sudo npm install
 sudo npm install $sources_path/lets-chat-ldap
+sudo npm rebuild
 cd -
 
 # Set permissions to app directory
