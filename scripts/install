@@ -19,7 +19,7 @@ sudo chmod 755 /sys/devices/system/node
 
 # Install system dependencies
 sudo apt-get install -y git build-essential python-software-properties nodejs-legacy npm mongodb
-sudo npm install forever -g
+command -v forever >/dev/null 2>&1 || sudo npm install forever -g
 
 # Install sources
 root_path=$(pwd)/..
