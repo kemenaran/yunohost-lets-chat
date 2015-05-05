@@ -18,7 +18,6 @@ sudo cp $root_path/conf/settings.yml $final_path/settings.yml
 cd $final_path
 sudo npm cache clear
 sudo npm install
-sudo npm install $sources_path/lets-chat-ldap
 sudo npm rebuild
 cd -
 

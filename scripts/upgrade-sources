@@ -14,10 +14,10 @@ git clone git@github.com:sdelements/lets-chat-ldap.git $sources_dir/lets-chat-ld
 cd $sources_dir/lets-chat
 npm cache clear
 npm install
+npm install lets-chat-ldap
 
 # Stage changes
 # (git forbids to add a `.git` directory in a subdirectory (except when using submodules); remove them)
-
 cd $root_dir
 rm -rf $sources_dir/lets-chat/.git
 rm -rf $sources_dir/lets-chat-ldap/.git
@@ -25,4 +25,3 @@ git add $sources_dir/*
 git add -f $sources_dir/lets-chat/node_modules/
 
 echo "Let's Chat sources pulled. Now commit the changes."
-
