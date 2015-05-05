@@ -13,8 +13,8 @@ git clone git@github.com:sdelements/lets-chat-ldap.git $sources_dir/lets-chat-ld
 # Pre-install node modules
 cd $sources_dir/lets-chat
 npm cache clear
-npm install
-npm install lets-chat-ldap
+npm install --production
+npm install --production lets-chat-ldap
 
 # Stage changes
 # (git forbids to add a `.git` directory in a subdirectory (except when using submodules); remove them)
