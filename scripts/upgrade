@@ -11,7 +11,7 @@ root_path=$(pwd)/..
 sources_path=$root_path/sources
 final_path=/var/www/letschat
 sudo mkdir -p $final_path
-sudo cp -rf $sources_path/lets-chat/* $final_path
+sudo cp -af $sources_path/lets-chat/* $final_path
 sudo cp $root_path/conf/settings.yml $final_path/settings.yml
 
 # Install app dependencies
