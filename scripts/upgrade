@@ -14,10 +14,8 @@ sudo mkdir -p $final_path
 sudo cp -af $sources_path/lets-chat/* $final_path
 sudo cp $root_path/conf/settings.yml $final_path/settings.yml
 
-# Install app dependencies
+# Rebuild binary dependencies
 cd $final_path
-sudo npm cache clear
-sudo npm install
 sudo npm rebuild
 cd -
 
