@@ -4,7 +4,11 @@ set -e # Exit on error
 # Retrieve arguments
 domain=$1
 is_public=$2
-path=""
+path=$3
+
+# Source version (commit)
+v_letschat=01473e7cc70f62c21f4d8b43f7b436089011d4f8
+v_ldap=b949a2080b20bbfa1b44f382e4b7689591a0b793
 
 sudo yunohost app checkurl $domain$path -a letschat
 if [[ ! $? -eq 0 ]]; then
@@ -13,42 +17,81 @@ fi
 
 # Save specific settings
 sudo yunohost app setting letschat is_public -v $is_public
+sudo yunohost app setting letschat v_letschat -v $v_letschat
+sudo yunohost app setting letschat v_ldap -v $v_ldap
 
 # Fix mongodb-server permissions (https://jira.mongodb.org/browse/SERVER-10623)
 sudo chmod 755 /sys/devices/system/node
 
-# Install system dependencies
-sudo apt-get install -y git build-essential python-software-properties nodejs-legacy npm mongodb
+# Install dependencies
+sudo curl --silent --location https://deb.nodesource.com/setup_0.12 | sudo bash -
+sudo apt-get install -y python-software-properties mongodb nodejs build-essential
+
 sudo which forever >/dev/null 2>&1 || sudo npm install forever -g
 
 # Install sources
 root_path=$(pwd)/..
-sources_path=$root_path/sources
 final_path=/var/www/letschat
 sudo mkdir -p $final_path
-sudo cp -af $sources_path/lets-chat/* $final_path
+
+# Get sources
+git clone https://github.com/sdelements/lets-chat /tmp/lets-chat
+cd /tmp/lets-chat
+git checkout $v_letschat
+git clone https://github.com/sdelements/lets-chat-ldap /tmp/lets-chat/lets-chat-ldap
+cd /tmp/lets-chat/lets-chat-ldap
+git checkout $v_ldap
+cd /tmp/lets-chat
+
+# Fix /login redirection path
+if [ "$path" != "/" ]; then
+    sed -i "s@/login@$path/login@g" /tmp/lets-chat/app/middlewares/requireLogin.js
+fi
+
+# Install
+npm cache clear
+npm install --production
+npm install --production lets-chat-ldap
+
+sudo mkdir -p $final_path
+sudo cp -af /tmp/lets-chat/* $final_path
 sudo cp $root_path/conf/settings.yml $final_path/settings.yml
 
-# Rebuild binary dependencies
-cd $final_path
-sudo npm rebuild
-cd -
+# Remove tmp dir
+sudo rm -r /tmp/lets-chat
 
 # Set permissions to app directory
 sudo chown -R www-data: $final_path
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
-sudo cp $root_path/conf/nginx.conf-nosub /etc/nginx/conf.d/$domain.d/letschat.conf
+if [ "$path" != "/" ]; then
+    sed -i "s@PATHTOCHANGE@$path@g" $root_path/conf/nginx.conf
+    sudo cp $root_path/conf/nginx.conf /etc/nginx/conf.d/$domain.d/letschat.conf
+else
+    sudo cp $root_path/conf/nginx.conf-nosub /etc/nginx/conf.d/$domain.d/letschat.conf
+fi
 
 # Copy init.d script
-sudo cp $root_path/conf/letschat /etc/init.d/
+sudo cp $root_path/conf/letschat /etc/init.d/letschat
 sudo chmod +x /etc/init.d/letschat
+cd /etc/init.d
+sudo update-rc.d letschat defaults
+
+# Register as a service
+sudo yunohost service add letschat
 
 # Reload Nginx and regenerate SSOwat conf
 sudo service nginx reload
+
 if [ "$is_public" = "Yes" ];
 then
-    sudo yunohost app setting letschat unprotected_uris -v "/"
+    sudo yunohost app setting letschat skipped_uris -v "/"
+else
+    # Temporary fix to resolve a strange bug with yunohost sso who put
+    # "WWW-Authenticate:Basic realm="Users"" in the response header when
+    # we protect "/""
+    sudo yunohost app setting letschat skipped_uris -v "/"
+    sudo yunohost app setting letschat protected_uris -v "/login"
 fi
 sudo yunohost app ssowatconf
 

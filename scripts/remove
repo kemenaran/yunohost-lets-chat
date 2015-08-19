@@ -13,3 +13,5 @@ sudo rm -rf /var/www/letschat
 sudo rm -f /etc/nginx/conf.d/$domain.d/letschat.conf
 sudo rm /etc/init.d/letschat
 
+# Remove the service
+sudo yunohost service remove letschat

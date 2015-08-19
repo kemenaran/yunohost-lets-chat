@@ -29,6 +29,16 @@
                 },
                 "choices": ["Yes", "No"],
                 "default": "Yes"
+            },
+            {
+                "name": "path",
+                "type": "path",
+                "ask": {
+                    "en": "Choose a path for Letschat",
+                    "fr": "Choisissez un chemin pour Letschat"
+                },
+                "example": "/letschat",
+                "default": "/letschat"
             }
         ]
     }

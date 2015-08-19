@@ -11,10 +11,6 @@ You can either :
 
 ## What works
 
-* Installation on domain's root
+* Installation on domain's root and sub-directory
 * Upgrade and removal
 * LDAP integration
-
-## TODO
-
-* Allow installation in sub-directory (only root-domains work for now)

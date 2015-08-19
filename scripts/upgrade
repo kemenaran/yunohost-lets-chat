@@ -2,40 +2,69 @@
 set -e # Exit on error
 
 # Retrieve arguments
-domain=$(sudo yunohost app setting letschat domain)
-is_public=$(sudo yunohost app setting letschat is_public)
-path=""
+path=$(sudo yunohost app setting letschat path)
 
-# Install sources
+v_letschat=01473e7cc70f62c21f4d8b43f7b436089011d4f8
+v_ldap=b949a2080b20bbfa1b44f382e4b7689591a0b793
+cv_letschat=0a
+cv_ldap=0a
+
 root_path=$(pwd)/..
-sources_path=$root_path/sources
 final_path=/var/www/letschat
-sudo mkdir -p $final_path
-sudo cp -af $sources_path/lets-chat/* $final_path
-sudo cp $root_path/conf/settings.yml $final_path/settings.yml
 
-# Rebuild binary dependencies
-cd $final_path
-sudo npm rebuild
-cd -
+# Check if it is an old install
+if [ -d /var/www/letschat/lets-chat-ldap ]; then
+    # Get the current version info
+    cv_letschat=$(sudo yunohost app setting letschat v_letschat)
+    cv_ldap=$(sudo yunohost app setting letschat v_ldap)
+else
+    # Remove old nodejs
+    sudo apt-get purge -y nodejs-legacy npm
+    # Install new nodejs
+    sudo curl --silent --location https://deb.nodesource.com/setup_0.12 | sudo bash -
+    sudo apt-get install -y nodejs build-essential
 
-# Set permissions to app directory
-sudo chown -R www-data: $final_path
-
-# Modify Nginx configuration file and copy it to Nginx conf directory
-sudo cp $root_path/conf/nginx.conf-nosub /etc/nginx/conf.d/$domain.d/letschat.conf
-
-# Copy init.d script
-sudo cp $root_path/conf/letschat /etc/init.d/
-sudo chmod +x /etc/init.d/letschat
-
-# Reload Nginx and regenerate SSOwat conf
-sudo service nginx reload
-if [ "$is_public" = "Yes" ];
-then
-    sudo yunohost app setting letschat unprotected_uris -v "/"
+    # Update config
+    sudo cp -f $root_path/conf/settings.yml $final_path/settings.yml
+    sudo cp -f $root_path/conf/letschat /etc/init.d/
+    sudo chmod +x /etc/init.d/letschat
+    sudo systemctl daemon-reload
 fi
-sudo yunohost app ssowatconf
 
-# Start app
-sudo service letschat restart
+# Check if we need to update
+if [ "$cv_letschat" = "$v_letschat" ] && [ "$cv_ldap" = "$v_ldap" ]; then
+    echo "Info: No updates are available at the moment, if a new version of letschat is out we will port the update soon."
+    exit 1
+fi
+
+# Proced with the update
+sudo service letschat stop
+
+# Get sources
+git clone https://github.com/sdelements/lets-chat /tmp/lets-chat
+cd /tmp/lets-chat
+git checkout $v_letschat
+cd /tmp/lets-chat/lets-chat-ldap
+git clone https://github.com/sdelements/lets-chat-ldap /tmp/lets-chat/lets-chat-ldap
+git checkout $v_ldap
+cd /tmp/lets-chat
+
+# Fix /login redirection path
+if [ "$path" != "/" ]; then
+    sed -i "s@/login@$path\login@g" /tmp/lets-chat/app/middlewares/requireLogin.js
+fi
+
+# Install
+npm cache clear
+npm install --production
+npm install --production lets-chat-ldap
+
+sudo cp -af /tmp/lets-chat/* $final_path
+
+cd $final_path
+sudo npm run-script migrate
+
+# Remove tmp dir
+sudo rm -r /tmp/lets-chat
+
+sudo service letschat start

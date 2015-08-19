@@ -41,9 +41,9 @@
 # An application name to display in echo text.
 NAME="Let's Chat"
 # The full path to the directory containing the node and forever binaries.
-NODE_BIN_DIR="/usr/local/bin"
+NODE_BIN_DIR="/usr/bin"
 # Set the NODE_PATH to the Node.js main node_modules directory.
-NODE_PATH="/usr/local/lib/node_modules"
+NODE_PATH="/var/www/letschat"
 # The application startup Javascript file path.
 APP_DIR="/var/www/letschat"
 APP_FILE="app.js"
