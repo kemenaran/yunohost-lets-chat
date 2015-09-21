@@ -26,7 +26,12 @@ files:
 xmpp:
   enable: false
   port: 5222
-  host: localhost
+  domain: localhost
+
+private:
+  enable: false
+  roster: online # online / all
+  expire: 360 # false or number of minutes
 
 database:
   uri: mongodb://localhost/letschat
