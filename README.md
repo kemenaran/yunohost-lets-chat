@@ -2,6 +2,16 @@
 
 A Yunohost package for [Let's Chat](https://sdelements.github.io/lets-chat/), a self-hosted chat for small teams.
 
+## Deprecation
+
+**This package is deprecated**: it uses old sources, and will probably not work on your machine. This is because:
+
+* Let's Chat requires to install npm modules, including many binary modules. Providing a stable way to install npm dependencies is hard.
+* Let's Chat development is less active than other groupchat projects.
+* I switched to Mattermost, which I like better and is much easier to install.
+
+If you are interested in a self-hosted chat system, try this [Mattermost package](https://github.com/kemenaran/yunohost-mattermost) instead. 
+
 ## Installation
 
 You can either :
