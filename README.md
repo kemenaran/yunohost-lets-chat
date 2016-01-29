@@ -1,8 +1,4 @@
-## Description
-
-A Yunohost package for [Let's Chat](https://sdelements.github.io/lets-chat/), a self-hosted chat for small teams.
-
-## Deprecation
+## This package is deprecated
 
 **This package is deprecated**: it uses old sources, and will probably not work on your machine. This is because:
 
@@ -11,6 +7,10 @@ A Yunohost package for [Let's Chat](https://sdelements.github.io/lets-chat/), a 
 * I switched to Mattermost, which I like better and is much easier to install.
 
 If you are interested in a self-hosted chat system, try this [Mattermost package](https://github.com/kemenaran/yunohost-mattermost) instead. 
+
+## Description
+
+A Yunohost package for [Let's Chat](https://sdelements.github.io/lets-chat/), a self-hosted chat for small teams.
 
 ## Installation
 
