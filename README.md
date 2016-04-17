@@ -6,7 +6,7 @@
 * Let's Chat development is less active than other groupchat projects.
 * I switched to Mattermost, which I like better and is much easier to install.
 
-If you are interested in a self-hosted chat system, try this [Mattermost package](https://github.com/kemenaran/yunohost-mattermost) instead. 
+If you are interested in a self-hosted chat system, try this [Mattermost package](https://github.com/kemenaran/mattermost_ynh) instead. 
 
 ## Description
 
